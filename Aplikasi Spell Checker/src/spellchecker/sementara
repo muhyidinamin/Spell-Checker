@@ -1,0 +1,165 @@
+package spellchecker;
+
+import java.awt.Color;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
+import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.awt.event.ActionEvent;
+import javax.swing.JList;
+
+public class Deteksi extends JFrame {
+
+	private JPanel contentPane;
+	private static String filePath;
+	private JList<String> typoList;
+	public String[] word;
+	public static String line; 
+	public static String fileName = "kbbi.txt";
+	public String rootWord; 
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Deteksi frame = new Deteksi(filePath);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Deteksi(String data) {
+		this.filePath = data;
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 671, 453);
+		this.setTitle("Spell Checker Application");
+		ImageIcon img = new ImageIcon("D:/Dokumen Skripsi/primary_spellcheck_actual.png");
+		this.setIconImage(img.getImage());
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setBackground(new Color(96, 150, 251));
+		contentPane.setLayout(null);
+		setContentPane(contentPane);
+		
+		JPanel panel = new JPanel();
+		
+		ArrayList<String> listModel = new ArrayList<String>();
+		
+		ArrayList<String> dict = new ArrayList<String>();
+		try {
+			Scanner s = new Scanner(new File(fileName));
+			
+			while(s.hasNextLine()){
+				dict.add(s.nextLine().toLowerCase());
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		FileOperations fo = new FileOperations();
+		String text = fo.read(filePath);
+		
+		String sentence = text;
+        sentence = sentence.replaceAll("[^a-zA-Z]", " ");
+        word = sentence.split(" ");
+        for (int i = 0; i < word.length; i++) {
+            word[i] = word[i].toLowerCase();
+            
+    		if(dict.contains(word[i])){
+    		}else{
+    			rootWord = this.stemming(word[i]);
+    			if (rootWord == word[i]){
+    				listModel.add(word[i]); 
+    			}
+    		}
+        }
+        
+        //create the list
+        String[] target = new String[listModel.size()];
+        typoList = new JList(listModel.toArray(target));
+        JScrollPane js = new JScrollPane(typoList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		contentPane.add(js);
+       
+		GroupLayout gl_panel = new GroupLayout(panel);
+		
+		panel.setLayout(gl_panel);
+		
+		JButton btnOneTypo = new JButton("Koreksi Per Kata");
+		btnOneTypo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new TampilHasil(listModel).setVisible(true);
+			}
+		});
+		
+		JButton btnAllTypo = new JButton("Koreksi Semua Kata");
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(btnOneTypo)
+							.addGap(18)
+							.addComponent(btnAllTypo))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(typoList, GroupLayout.PREFERRED_SIZE, 303, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap(111, Short.MAX_VALUE))
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(31)
+					.addComponent(typoList, GroupLayout.PREFERRED_SIZE, 170, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnOneTypo)
+						.addComponent(btnAllTypo))
+					.addGap(21))
+		);
+		contentPane.setLayout(gl_contentPane);
+	}
+	private String stemming(String word) {
+		// TODO Auto-generated method stub
+			StemmingNaziefAndriani sta;
+			try {
+				sta = new StemmingNaziefAndriani();
+				rootWord = sta.KataDasar(word);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return rootWord;
+	}
+ }
+    		

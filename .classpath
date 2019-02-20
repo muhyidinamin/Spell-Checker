@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="Aplikasi Spell Checker/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="D:/Skripsi Amin/library/itextg-5.5.8.jar"/>
+	<classpathentry kind="lib" path="D:/Skripsi Amin/library/itextg-5.5.8-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/Skripsi Amin/library/itextg-5.5.8-sources.jar"/>
+	<classpathentry kind="output" path="Aplikasi Spell Checker/bin"/>
+</classpath>
